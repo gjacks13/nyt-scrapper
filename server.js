@@ -10,11 +10,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 // Serve up static assets
 app.use(express.static("client/build"));
+
 // Add routes, both API and view
 app.use(routes);
 
 // Connect to the Mongo DB
 mongoose.connect("mongodb://root:root@ds133964.mlab.com:33964/heroku_gd061p45");
+
+app.get("*", (req, res) => {  
+  res.sendFile(path.join(__dirname, "client", "build", "index.html"));
+});
 
 // Start the API server
 app.listen(PORT, function() {
