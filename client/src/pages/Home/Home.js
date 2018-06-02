@@ -4,6 +4,7 @@ import SaveBtn from "../../components/SaveBtn";
 import { List, ListItem } from "../../components/List";
 import { Input, FormBtn } from "../../components/Form";
 import { Container, Row, Col } from "../../components/Grid";
+import moment from 'moment';
 
 class Home extends Component {
   state = {
@@ -72,11 +73,17 @@ class Home extends Component {
     this.loadArticles(savedOnly, startDate, endDate);
   };
 
+  parseLocalTime = gmtDate => {
+    var gmtDateTime = moment.utc(gmtDate);
+    var local = gmtDateTime.local().format('YYYY-MMM-DD h:mm A');
+    return local;
+  };
+
   render() {
     return (
       <Container>
         <Row>
-          <Col size="col-12">
+          <Col size="lg-12">
             <h2>Search</h2>
             <form>
               <Input />
@@ -88,7 +95,7 @@ class Home extends Component {
         </Row>
 
         <Row>
-          <Col size="col-12">
+          <Col size="lg-12">
             <h2>Results</h2>
             {this.state.articles.length ? (
               <List>
@@ -98,7 +105,7 @@ class Home extends Component {
                     <div>
                       <p className="item-title">Title: {article.title}</p>
                       <p className="item-author">Author: {article.author}</p>
-                      <p className="item-date">Publish Date: {article.publish_date}</p>
+                      <p className="item-date">Publish Date: {this.parseLocalTime(article.publish_date)}</p>
                       <p className="item-url">Url: {article.url}</p>
                       <SaveBtn onClick={() => this.saveArticle(article._id)}/>
                     </div>
@@ -112,7 +119,7 @@ class Home extends Component {
         </Row>
         
         <Row>
-          <Col size="col-12">
+          <Col size="lg-12">
             <h2>Saved Articles</h2>
             {this.state.savedArticles.length ? (
               <List>

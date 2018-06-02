@@ -6,12 +6,12 @@
   "scripts": {
     "server": "node server.js",
     "client": "node scripts/start-client.js",
-    "start": "concurrently \"node server.js\" \"npm run client\"",
+    "start": "concurrently \"node server.js\" \"yarn run client\"",
     "build": "node scripts/build.js",
     "seed": "node scripts/seedDB.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "installDeps": "yarn && cd client && yarn",
-    "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build"
+    "heroku-postbuild": "cd client && yarn install && yarn run build"
   },
   "author": "",
   "license": "ISC",
@@ -24,6 +24,7 @@
     "body-parser": "^1.17.2",
     "cheerio": "^1.0.0-rc.2",
     "express": "^4.15.4",
+    "moment": "^2.22.2",
     "mongoose": "^5.0.11"
   }
 }

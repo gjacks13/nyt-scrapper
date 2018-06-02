@@ -3,6 +3,13 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 
 const NYT_URL = "https://www.nytimes.com/";
+
+const convertUTCSeconds= utcSeconds => {
+  let d = new Date(0); // The 0 there is the key, which sets the date to the epoch
+  d.setUTCSeconds(utcSeconds);
+  return d;
+}
+
 const scrapeArticles = res => {
   let articlesArray = [];
   // First, we grab the body of the html with request
@@ -31,28 +38,25 @@ const scrapeArticles = res => {
         let byLine = article.children(".byline");
 
         const title = storyHeadingLink.text();
+        const url = storyHeadingLink.attr("href");
 
-        const url = storyHeadingLink
-          .attr("href");
-
-        let author = byLine
-          .text();
+        let author = byLine.text();
         const authorRegex = `^By\\s([a-zA-Z_\\s\\.\\,]+)\\d*.*$`;
         const rgxObj= new RegExp(authorRegex);
         let match = rgxObj.exec(author);
-        author = match[1].trim();
+        author = match && match.length > 1 ? match[1].trim() : null;
 
         const publishDate = byLine
           .children("time")
-          .attr("datetime");
+          .attr("data-utc-timestamp");
 
         // Save an empty result object
         const result = {};
   
         // Add the text and href of every link, and save them as properties of the result object
         result.title = title;
-        result.author = author;
-        result.publish_date = new Date(publishDate);
+        result.author = author;        
+        result.publish_date = convertUTCSeconds(publishDate);
         result.url = url;
         console.log(result);
 
@@ -60,16 +64,15 @@ const scrapeArticles = res => {
         articlesArray.push(result);
 
         db.Article.create(result)
-        .then(function(dbArticle) {
-          console.log(dbArticle);
-        })
-        .catch(function(err) {
-          return res.json(err);
-        });
+          .then(function(dbArticle) {
+            console.log(dbArticle);
+          })
+          .catch(function(err) {
+            return res.json(err);
+          });
       }
     });
       
-    //res.json(articlesArray);
     res.send("Scrape Complete");
   });
 };

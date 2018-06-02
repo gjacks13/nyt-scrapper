@@ -3,7 +3,6 @@ import axios from "axios";
 export default {
   // Gets all articles
   getArticles: function(savedOnly, startYear, endYear) {
-    let route = "/api/articles";
     let queryString = "";
     if (startYear) {
       queryString += `startYear=${startYear}&`;
